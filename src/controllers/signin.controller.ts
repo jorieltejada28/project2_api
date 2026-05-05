@@ -10,9 +10,9 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 export const googleLogin = async (req: Request, res: Response): Promise<void> => {
-    const { token } = req.body; // This is the 'code' from the frontend
+    const { code } = req.body; // This is the 'code' from the frontend
 
-    if (!token) {
+    if (!code) {
         res.status(400).json({ message: 'Authorization code is required' });
         return;
     }
@@ -22,11 +22,11 @@ export const googleLogin = async (req: Request, res: Response): Promise<void> =>
         const client = new OAuth2Client(
             process.env.GOOGLE_CLIENT_ID,
             process.env.GOOGLE_CLIENT_SECRET,
-            'postmessage' // Vital for popup-based flows
+            'postmessage'
         );
 
         // 2. EXCHANGE the code for tokens
-        const { tokens } = await client.getToken(token);
+        const { tokens } = await client.getToken(code);
         const idToken = tokens.id_token;
 
         if (!idToken) {
